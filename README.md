@@ -54,6 +54,21 @@ npm run tauri:dev
 npm run tauri:build
 ```
 
+## Releases
+
+O projeto tem um workflow em `.github/workflows/release.yml` para gerar builds
+de Linux e Windows no GitHub Actions.
+
+Para publicar uma release:
+
+```bash
+git tag calcpay-v0.1.0
+git push origin calcpay-v0.1.0
+```
+
+O workflow cria a release `CalcPay v0.1.0` e anexa os instaladores gerados pelo
+Tauri. Tambem e possivel rodar o workflow manualmente pela aba Actions do GitHub.
+
 ## Planos
 
 Os planos controlam as permissoes da calculadora:
