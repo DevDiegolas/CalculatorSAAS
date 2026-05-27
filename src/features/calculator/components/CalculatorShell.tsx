@@ -5,6 +5,7 @@ import {
   Divide,
   Equal,
   LockKeyhole,
+  MemoryStick,
   Minus,
   Percent,
   Plus,
@@ -151,6 +152,19 @@ export function CalculatorShell({
                 Resultado protegido por assinatura.
               </p>
             ) : null}
+            <div className="mt-2 flex min-h-5 items-center justify-between gap-2 text-xs font-semibold">
+              {calculator.state.memory !== 0 ? (
+                <span className="inline-flex items-center gap-1 rounded bg-white/10 px-2 py-1 text-slate-200">
+                  <MemoryStick size={12} />
+                  M {calculator.state.memory}
+                </span>
+              ) : (
+                <span />
+              )}
+              {calculator.memoryFeedback ? (
+                <span className="truncate text-right text-slate-200">{calculator.memoryFeedback}</span>
+              ) : null}
+            </div>
           </div>
 
           <div className="grid grid-cols-4 gap-2">

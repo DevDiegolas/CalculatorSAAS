@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalculatorService } from '../services/CalculatorService';
 import type { CalculatorState } from '../types/Calculator';
 import type { FeatureId, OperationId } from '../../subscriptions/types/Plan';
@@ -14,6 +14,19 @@ export function useCalculator(subscriptionService: SubscriptionService) {
   const [state, setState] = useState<CalculatorState>(() => calculatorService.getInitialState());
   const [lastBlockedFeature, setLastBlockedFeature] = useState<BlockedFeature | null>(null);
   const [hiddenResult, setHiddenResult] = useState<string | null>(null);
+  const [memoryFeedback, setMemoryFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!memoryFeedback) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setMemoryFeedback(null);
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [memoryFeedback]);
 
   const blockFeature = (featureName: string) => {
     setLastBlockedFeature({
@@ -28,7 +41,20 @@ export function useCalculator(subscriptionService: SubscriptionService) {
       return;
     }
 
-    setState((currentState) => calculatorService.setOperation(currentState, operation));
+    setState((currentState) => {
+      const shouldHideIntermediateResult =
+        !subscriptionService.canUseFeature('reveal-result') &&
+        currentState.pendingOperation !== null &&
+        currentState.storedValue !== null &&
+        !currentState.shouldResetDisplay;
+      const nextState = calculatorService.setOperation(currentState, operation);
+
+      if (shouldHideIntermediateResult) {
+        setHiddenResult(nextState.display);
+      }
+
+      return nextState;
+    });
   };
 
   const calculate = () => {
@@ -55,6 +81,7 @@ export function useCalculator(subscriptionService: SubscriptionService) {
   return {
     state,
     hiddenResult,
+    memoryFeedback,
     lastBlockedFeature,
     clearBlockedFeature: () => setLastBlockedFeature(null),
     inputDigit: (digit: string) => {
@@ -82,15 +109,27 @@ export function useCalculator(subscriptionService: SubscriptionService) {
       ),
     memoryAdd: () =>
       requireFeature('memory', 'Memoria', () =>
-        setState((currentState) => calculatorService.addMemory(currentState)),
+        setState((currentState) => {
+          const nextState = calculatorService.addMemory(currentState);
+          setMemoryFeedback(`Memoria: ${nextState.memory}`);
+          return nextState;
+        }),
       ),
     memoryRecall: () =>
       requireFeature('memory', 'Memoria', () =>
-        setState((currentState) => calculatorService.recallMemory(currentState)),
+        setState((currentState) => {
+          const nextState = calculatorService.recallMemory(currentState);
+          setMemoryFeedback(`Memoria recuperada: ${nextState.display}`);
+          return nextState;
+        }),
       ),
     memoryClear: () =>
       requireFeature('memory', 'Memoria', () =>
-        setState((currentState) => calculatorService.clearMemory(currentState)),
+        setState((currentState) => {
+          const nextState = calculatorService.clearMemory(currentState);
+          setMemoryFeedback('Memoria limpa');
+          return nextState;
+        }),
       ),
   };
 }
