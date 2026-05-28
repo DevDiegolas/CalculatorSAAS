@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { useCalculator } from '../src/features/calculator/hooks/useCalculator';
-import { SubscriptionService } from '../src/features/subscriptions/services/SubscriptionService';
-import type { SubscriptionStorage } from '../src/features/subscriptions/services/SubscriptionStorage';
-import type { PlanId } from '../src/features/subscriptions/types/Plan';
+import { useCalculator } from '../../../src/features/calculator/hooks/useCalculator';
+import { SubscriptionService } from '../../../src/features/subscriptions/services/SubscriptionService';
+import type { SubscriptionStorage } from '../../../src/features/subscriptions/services/SubscriptionStorage';
+import type { PlanId } from '../../../src/features/subscriptions/types/Plan';
 
 class MemorySubscriptionStorage implements SubscriptionStorage {
   constructor(private planId: PlanId = 'free') {}

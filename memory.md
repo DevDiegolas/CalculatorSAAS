@@ -45,8 +45,12 @@ Fluxos importantes:
 - `src/features/calculator`: hook, servico, tipos e componentes da calculadora.
 - `src/features/subscriptions`: planos, permissoes, strategies, storage local e
   mensagens por plano.
-- `src/shared`: componentes reutilizaveis e estilos globais.
+- `src/shared/ui`: componentes reutilizaveis.
+- `src/shared/styles`: estilos globais.
 - `src-tauri`: config e bootstrap Tauri.
+- `tests/unit`: testes unitarios organizados por feature.
+- `tests/setup.ts`: setup global do Vitest.
+- `infra/docker`: Dockerfile do ambiente frontend.
 - `.github/workflows/release.yml`: release desktop Linux/Windows.
 
 Padroes usados:

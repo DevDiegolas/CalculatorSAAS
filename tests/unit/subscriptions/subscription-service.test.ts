@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { SubscriptionService } from '../src/features/subscriptions/services/SubscriptionService';
-import type { SubscriptionStorage } from '../src/features/subscriptions/services/SubscriptionStorage';
-import type { PlanId } from '../src/features/subscriptions/types/Plan';
+import { SubscriptionService } from '../../../src/features/subscriptions/services/SubscriptionService';
+import type { SubscriptionStorage } from '../../../src/features/subscriptions/services/SubscriptionStorage';
+import type { PlanId } from '../../../src/features/subscriptions/types/Plan';
 
 class MemorySubscriptionStorage implements SubscriptionStorage {
   constructor(private planId: PlanId = 'free') {}

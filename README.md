@@ -115,8 +115,11 @@ O projeto separa UI e regras de dominio por feature:
 
 - `src/features/calculator`: estado, comandos e interface da calculadora
 - `src/features/subscriptions`: planos, permissoes e assinatura local
-- `src/shared`: componentes e estilos reutilizaveis
+- `src/shared/ui`: componentes reutilizaveis
+- `src/shared/styles`: estilos globais
 - `src-tauri`: configuracao e bootstrap do app desktop
+- `tests/unit`: testes unitarios por feature
+- `infra/docker`: Dockerfile do ambiente frontend
 
 As regras de plano usam Strategy + Factory, permitindo adicionar novos planos
 sem espalhar condicionais pela UI.

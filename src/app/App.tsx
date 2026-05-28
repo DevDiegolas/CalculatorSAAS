@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Calculator, ReceiptText } from 'lucide-react';
-import { Button } from '../shared/components/Button';
+import { Button } from '../shared/ui/Button';
 import { CalculatorShell } from '../features/calculator/components/CalculatorShell';
 import { UpgradeModal } from '../features/subscriptions/components/UpgradeModal';
 import { SubscriptionBadge } from '../features/subscriptions/components/SubscriptionBadge';

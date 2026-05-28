@@ -17,7 +17,7 @@ import {
 import { clsx } from 'clsx';
 import { CalculatorButton } from './CalculatorButton';
 import { useCalculator } from '../hooks/useCalculator';
-import { Modal } from '../../../shared/components/Modal';
+import { Modal } from '../../../shared/ui/Modal';
 import { calculatorThemes, type CalculatorThemeId } from '../data/calculatorThemes';
 import type { SubscriptionService } from '../../subscriptions/services/SubscriptionService';
 

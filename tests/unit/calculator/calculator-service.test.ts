@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CalculatorService } from '../src/features/calculator/services/CalculatorService';
+import { CalculatorService } from '../../../src/features/calculator/services/CalculatorService';
 
 describe('CalculatorService', () => {
   it('calculates a basic addition', () => {

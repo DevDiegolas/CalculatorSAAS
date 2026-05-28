@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BadgeCheck, Check, Loader2, LockKeyhole, Sparkles } from 'lucide-react';
-import { Modal } from '../../../shared/components/Modal';
-import { Button } from '../../../shared/components/Button';
+import { Modal } from '../../../shared/ui/Modal';
+import { Button } from '../../../shared/ui/Button';
 import { plans } from '../data/plans';
 import type { Plan, PlanId } from '../types/Plan';
 
