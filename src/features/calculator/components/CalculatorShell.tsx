@@ -7,9 +7,11 @@ import {
   LockKeyhole,
   MemoryStick,
   Minus,
+  Palette,
   Percent,
   Plus,
   Radical,
+  ReceiptText,
   X,
 } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -22,7 +24,7 @@ import type { SubscriptionService } from '../../subscriptions/services/Subscript
 interface CalculatorShellProps {
   subscriptionService: SubscriptionService;
   canShowHistory: boolean;
-  onBlocked: (message: string) => void;
+  onBlocked: (message?: string) => void;
 }
 
 export function CalculatorShell({
@@ -32,6 +34,7 @@ export function CalculatorShell({
 }: CalculatorShellProps) {
   const calculator = useCalculator(subscriptionService);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [selectedThemeId, setSelectedThemeId] = useState<CalculatorThemeId>('white');
   const selectedTheme =
     calculatorThemes.find((theme) => theme.id === selectedThemeId) ?? calculatorThemes[0];
@@ -57,7 +60,9 @@ export function CalculatorShell({
 
   const openHistory = () => {
     if (!canShowHistory) {
-      onBlocked(subscriptionService.getLockedMessage('Historico'));
+      onBlocked(
+        subscriptionService.getLockedMessage('Historico', { kind: 'feature', id: 'history' }),
+      );
       return;
     }
 
@@ -72,11 +77,17 @@ export function CalculatorShell({
     }
 
     if (theme.requiredFeature && !subscriptionService.canUseFeature(theme.requiredFeature)) {
-      onBlocked(subscriptionService.getLockedMessage(`Tema ${theme.name}`));
+      onBlocked(
+        subscriptionService.getLockedMessage(`Tema ${theme.name}`, {
+          kind: 'feature',
+          id: theme.requiredFeature,
+        }),
+      );
       return;
     }
 
     setSelectedThemeId(theme.id);
+    setIsThemeModalOpen(false);
   };
 
   const getButtonClassName = (tone: 'number' | 'operator' | 'utility' | 'equals') => {
@@ -100,17 +111,68 @@ export function CalculatorShell({
           .join(' ')
       : '';
 
+  const renderThemePicker = (variant: 'sidebar' | 'modal') => (
+    <div
+      className={clsx(
+        variant === 'sidebar' ? 'grid grid-cols-3 gap-2 lg:grid-cols-2' : 'grid grid-cols-2 gap-2',
+      )}
+    >
+      {calculatorThemes.map((theme) => {
+        const isSelected = theme.id === selectedTheme.id;
+        const isThemeLocked =
+          Boolean(theme.requiredFeature) &&
+          !subscriptionService.canUseFeature(theme.requiredFeature!);
+
+        return (
+          <button
+            aria-label={`Tema ${theme.name}`}
+            className={clsx(
+              'relative flex h-14 items-center justify-start gap-3 rounded-md border px-3 text-sm font-bold transition',
+              variant === 'sidebar' && 'flex-col justify-center gap-1 px-0 text-xs',
+              isSelected
+                ? 'border-slate-950 bg-slate-950 text-white'
+                : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white',
+            )}
+            key={theme.id}
+            onClick={() => selectTheme(theme.id)}
+            title={isThemeLocked ? `Tema ${theme.name} bloqueado` : `Tema ${theme.name}`}
+            type="button"
+          >
+            <span
+              className={clsx(
+                'h-6 w-6 shrink-0 rounded-full border border-black/10 ring-1 ring-slate-200',
+                variant === 'sidebar' && 'h-5 w-5',
+                theme.swatchClassName,
+              )}
+            />
+            <span>{theme.name}</span>
+            {isThemeLocked ? (
+              <span className="absolute right-2 top-2 text-slate-500">
+                <LockKeyhole size={12} />
+              </span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
-      <section className="mx-auto grid w-[610px] grid-cols-[400px_190px] items-start gap-5">
+      <section className="grid h-full min-h-0 w-full grid-cols-1 items-stretch gap-3 md:mx-auto md:h-auto md:w-[610px] md:grid-cols-[400px_190px] md:items-start md:gap-5">
         <div
           className={clsx(
-            'w-[400px] rounded-lg border p-3 shadow-panel',
+            'flex h-full min-h-0 w-full flex-col rounded-lg border p-2 shadow-panel sm:p-3 md:h-auto md:w-[400px]',
             selectedTheme.shellClassName,
           )}
         >
-          <div className={clsx('mb-3 rounded-lg p-3', selectedTheme.displayClassName)}>
-            <div className="mb-2 flex items-center gap-2">
+          <div
+            className={clsx(
+              'mb-2 flex min-h-[11.5rem] shrink-0 flex-col rounded-lg p-3 sm:mb-3 md:min-h-0',
+              selectedTheme.displayClassName,
+            )}
+          >
+            <div className="mb-2 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <button
                   aria-label="Historico"
@@ -134,6 +196,26 @@ export function CalculatorShell({
                 >
                   CalcPay Terminal
                 </p>
+              </div>
+              <div className="flex items-center gap-2 md:hidden">
+                <button
+                  aria-label="Planos"
+                  className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-slate-200 transition hover:bg-white/15 hover:text-white"
+                  onClick={() => onBlocked()}
+                  title="Planos"
+                  type="button"
+                >
+                  <ReceiptText size={17} />
+                </button>
+                <button
+                  aria-label="Escolher tema"
+                  className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-slate-200 transition hover:bg-white/15 hover:text-white"
+                  onClick={() => setIsThemeModalOpen(true)}
+                  title="Escolher tema"
+                  type="button"
+                >
+                  <Palette size={17} />
+                </button>
               </div>
             </div>
             <div
@@ -167,7 +249,7 @@ export function CalculatorShell({
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid min-h-0 flex-1 grid-cols-4 grid-rows-5 gap-2 md:flex-none md:grid-rows-none">
             <CalculatorButton
               className={getButtonClassName('utility')}
               label="Limpar"
@@ -296,7 +378,7 @@ export function CalculatorShell({
             </CalculatorButton>
           </div>
 
-          <div className="mt-2 grid grid-cols-3 gap-2">
+          <div className="mt-2 grid h-[clamp(4.5rem,11dvh,6.25rem)] grid-cols-3 gap-2 md:h-auto">
             <CalculatorButton
               className={getButtonClassName('utility')}
               isLocked={isLocked.memory}
@@ -327,50 +409,18 @@ export function CalculatorShell({
           </div>
         </div>
 
-        <aside className="w-[190px] rounded-lg border border-slate-200 bg-white p-3 shadow-panel">
+        <aside className="hidden w-[190px] rounded-lg border border-slate-200 bg-white p-3 shadow-panel md:block">
           <div className="mb-3">
             <h2 className="text-sm font-black text-slate-950">Temas</h2>
             <p className="text-xs font-medium text-slate-500">Aparencia da calculadora</p>
           </div>
-          <div className="grid grid-cols-3 gap-2 lg:grid-cols-2">
-            {calculatorThemes.map((theme) => {
-              const isSelected = theme.id === selectedTheme.id;
-              const isThemeLocked =
-                Boolean(theme.requiredFeature) &&
-                !subscriptionService.canUseFeature(theme.requiredFeature!);
-
-              return (
-                <button
-                  aria-label={`Tema ${theme.name}`}
-                  className={clsx(
-                    'relative flex h-14 flex-col items-center justify-center gap-1 rounded-md border text-xs font-bold transition',
-                    isSelected
-                      ? 'border-slate-950 bg-slate-950 text-white'
-                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white',
-                  )}
-                  key={theme.id}
-                  onClick={() => selectTheme(theme.id)}
-                  title={isThemeLocked ? `Tema ${theme.name} bloqueado` : `Tema ${theme.name}`}
-                  type="button"
-                >
-                  <span
-                    className={clsx(
-                      'h-5 w-5 rounded-full border border-black/10 ring-1 ring-slate-200',
-                      theme.swatchClassName,
-                    )}
-                  />
-                  <span>{theme.name}</span>
-                  {isThemeLocked ? (
-                    <span className="absolute right-1.5 top-1.5 text-slate-500">
-                      <LockKeyhole size={12} />
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
+          {renderThemePicker('sidebar')}
         </aside>
       </section>
+
+      <Modal isOpen={isThemeModalOpen} onClose={() => setIsThemeModalOpen(false)} title="Temas">
+        {renderThemePicker('modal')}
+      </Modal>
 
       <Modal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} title="Historico">
         <div className="space-y-3">

@@ -41,4 +41,18 @@ describe('SubscriptionService', () => {
     expect(service.canUseFeature('square-root')).toBe(true);
     expect(service.canUseFeature('memory')).toBe(true);
   });
+
+  it('shows the correct required plan for locked features', () => {
+    const service = new SubscriptionService(new MemorySubscriptionStorage('free'));
+
+    expect(
+      service.getLockedMessage('Raiz quadrada', { kind: 'feature', id: 'square-root' }),
+    ).toBe('Raiz quadrada exige o plano Enterprise. Seu plano atual e Free.');
+    expect(
+      service.getLockedMessage('Multiplicacao', { kind: 'operation', id: 'multiply' }),
+    ).toBe('Multiplicacao exige o plano Pro. Seu plano atual e Free.');
+    expect(
+      service.getLockedMessage('Resultado', { kind: 'feature', id: 'reveal-result' }),
+    ).toBe('Resultado exige o plano Basic. Seu plano atual e Free.');
+  });
 });

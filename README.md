@@ -10,7 +10,7 @@ simuladas localmente e persistidas no `localStorage`.
 
 ## Stack
 
-- Tauri: empacotamento desktop
+- Tauri: empacotamento desktop e Android
 - React: interface componentizada
 - TypeScript: contratos e regras tipadas
 - Vite: dev server e build do frontend
@@ -19,9 +19,9 @@ simuladas localmente e persistidas no `localStorage`.
 - Vitest: testes unitarios
 - Docker Compose: ambiente Node isolado para desenvolvimento frontend
 
-O app e pensado para rodar como desktop app. O Docker fica responsavel pelo
-ambiente Node, mas o Tauri deve ser executado no host por depender de janela e
-toolchain nativo.
+O app e pensado para rodar como desktop app e APK Android. O Docker fica
+responsavel pelo ambiente Node, mas o Tauri deve ser executado no host ou no CI
+por depender de janela, Android SDK e toolchain nativo.
 
 ## Rodando com Docker
 
@@ -29,7 +29,7 @@ toolchain nativo.
 docker compose up
 ```
 
-O Vite fica em `http://localhost:5173`.
+O Vite fica em `http://localhost:47291`.
 
 Esse modo serve para desenvolvimento do frontend. Para testar como app desktop,
 use o Tauri no host.
@@ -43,6 +43,31 @@ npm install
 npm run tauri:dev
 ```
 
+## Rodando e gerando APK Android
+
+Para Android, instale Android Studio/SDK, Java e Rust no host, depois inicialize
+o alvo Android uma vez:
+
+```bash
+npm install
+npm run tauri:android:init
+```
+
+Com um celular/emulador conectado:
+
+```bash
+npm run tauri:android:dev
+```
+
+Para gerar APK/AAB de release:
+
+```bash
+npm run tauri:android:build
+```
+
+O Tauri gera os arquivos Android em `src-tauri/gen/android`. O APK de release
+fica dentro da pasta de build do Gradle desse projeto gerado.
+
 ## Scripts
 
 ```bash
@@ -52,6 +77,9 @@ npm run test
 npm run lint
 npm run tauri:dev
 npm run tauri:build
+npm run tauri:android:init
+npm run tauri:android:dev
+npm run tauri:android:build
 ```
 
 ## Releases

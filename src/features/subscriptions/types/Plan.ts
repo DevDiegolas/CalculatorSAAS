@@ -27,5 +27,4 @@ export interface PlanStrategy {
   readonly planId: PlanId;
   canUseOperation(operation: OperationId): boolean;
   canUseFeature(feature: FeatureId): boolean;
-  getLockedMessage(featureName: string): string;
 }

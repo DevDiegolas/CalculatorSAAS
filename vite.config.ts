@@ -6,7 +6,7 @@ export default defineConfig({
   clearScreen: false,
   server: {
     host: '0.0.0.0',
-    port: 5173,
+    port: 47291,
     strictPort: true,
   },
   test: {

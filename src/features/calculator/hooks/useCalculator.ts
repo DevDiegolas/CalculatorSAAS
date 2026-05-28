@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalculatorService } from '../services/CalculatorService';
 import type { CalculatorState } from '../types/Calculator';
+import type { LockedCapability } from '../../subscriptions/data/planRequirements';
 import type { FeatureId, OperationId } from '../../subscriptions/types/Plan';
 import type { SubscriptionService } from '../../subscriptions/services/SubscriptionService';
 
@@ -28,16 +29,16 @@ export function useCalculator(subscriptionService: SubscriptionService) {
     return () => window.clearTimeout(timeoutId);
   }, [memoryFeedback]);
 
-  const blockFeature = (featureName: string) => {
+  const blockFeature = (featureName: string, capability: LockedCapability) => {
     setLastBlockedFeature({
       featureName,
-      message: subscriptionService.getLockedMessage(featureName),
+      message: subscriptionService.getLockedMessage(featureName, capability),
     });
   };
 
   const runOperation = (operation: OperationId, label: string) => {
     if (!subscriptionService.canUseOperation(operation)) {
-      blockFeature(label);
+      blockFeature(label, { kind: 'operation', id: operation });
       return;
     }
 
@@ -61,7 +62,7 @@ export function useCalculator(subscriptionService: SubscriptionService) {
     if (!subscriptionService.canUseFeature('reveal-result')) {
       const preview = calculatorService.calculate(state);
       setHiddenResult(preview.result ?? state.display);
-      blockFeature('Resultado');
+      blockFeature('Resultado', { kind: 'feature', id: 'reveal-result' });
       return;
     }
 
@@ -71,7 +72,7 @@ export function useCalculator(subscriptionService: SubscriptionService) {
 
   const requireFeature = (feature: FeatureId, label: string, action: () => void) => {
     if (!subscriptionService.canUseFeature(feature)) {
-      blockFeature(label);
+      blockFeature(label, { kind: 'feature', id: feature });
       return;
     }
 

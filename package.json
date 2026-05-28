@@ -11,8 +11,12 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "tauri": "tauri",
+    "pretauri:dev": "fuser -k 47291/tcp 2>/dev/null || true",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:android:init": "tauri android init",
+    "tauri:android:dev": "tauri android dev",
+    "tauri:android:build": "tauri android build"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",

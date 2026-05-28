@@ -12,20 +12,12 @@ abstract class BasePlanStrategy implements PlanStrategy {
   canUseFeature(feature: FeatureId): boolean {
     return this.features.has(feature);
   }
-
-  getLockedMessage(featureName: string): string {
-    return `${featureName} esta disponivel mediante upgrade de plano.`;
-  }
 }
 
 export class FreePlanStrategy extends BasePlanStrategy {
   readonly planId = 'free' as const;
   protected readonly operations = new Set<OperationId>(['add']);
   protected readonly features = new Set<FeatureId>();
-
-  override getLockedMessage(featureName: string): string {
-    return `${featureName} exige pelo menos o plano Basic.`;
-  }
 }
 
 export class BasicPlanStrategy extends BasePlanStrategy {

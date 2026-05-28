@@ -5,7 +5,7 @@
   "identifier": "com.calcpay.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:5173",
+    "devUrl": "http://localhost:47291",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },

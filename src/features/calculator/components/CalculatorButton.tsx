@@ -30,7 +30,7 @@ export function CalculatorButton({
     <button
       aria-label={label}
       className={clsx(
-        'relative grid h-14 place-items-center rounded-lg text-lg font-black shadow-sm ring-1 ring-slate-200 transition active:scale-[0.98] sm:h-16',
+        'relative grid h-full min-h-12 place-items-center rounded-lg text-lg font-black shadow-sm ring-1 ring-slate-200 transition active:scale-[0.98] sm:h-16',
         toneClasses[tone],
         className,
       )}
